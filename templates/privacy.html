@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="text-center mb-5">
+                <h1 class="fw-bold" style="color: #0b2241;">Privacy Policy</h1>
+                <p class="text-muted">Last Updated: February 2026</p>
+                <div class="mx-auto" style="width: 60px; height: 4px; background: #33b5ff; border-radius: 2px;"></div>
+            </div>
+
+            <div class="card border-0 shadow-sm p-4 p-md-5" style="border-radius: 25px;">
+                <div class="policy-section mb-4">
+                    <h4 class="fw-bold" style="color: #33b5ff;"><i class="fa-solid fa-shield-halved me-2"></i> Introduction</h4>
+                    <p>Welcome to <strong>Your Site</strong>. We value your privacy and are committed to protecting your personal data. This policy explains how we collect, use, and safeguard your information when you visit our website and purchase our products.</p>
+                </div>
+
+                <div class="policy-section mb-4">
+                    <h4 class="fw-bold" style="color: #33b5ff;"><i class="fa-solid fa-database me-2"></i> Information We Collect</h4>
+                    <p>When you place an order or contact us, we collect certain information to provide a better service, including:</p>
+                    <ul>
+                        <li><strong>Personal Details:</strong> Name, phone number, and delivery address.</li>
+                        <li><strong>Order Information:</strong> Details of the items you purchase and your 10-digit Order ID.</li>
+                        <li><strong>Communication:</strong> Any messages you send us via our contact form.</li>
+                    </ul>
+                </div>
+
+                <div class="policy-section mb-4">
+                    <h4 class="fw-bold" style="color: #33b5ff;"><i class="fa-solid fa-circle-check me-2"></i> How We Use Your Data</h4>
+                    <p>Your data is used strictly for business purposes:</p>
+                    <ul>
+                        <li>To process and deliver your orders efficiently.</li>
+                        <li>To allow you to track your order status using our system.</li>
+                        <li>To contact you regarding order updates or customer support.</li>
+                    </ul>
+                </div>
+
+                <div class="policy-section mb-4">
+                    <h4 class="fw-bold" style="color: #33b5ff;"><i class="fa-solid fa-lock me-2"></i> Data Security</h4>
+                    <p>We implement industry-standard security measures to ensure your personal information remains safe. We do not sell, trade, or rent your personal identification information to third parties.</p>
+                </div>
+
+                <div class="policy-section mb-4">
+                    <h4 class="fw-bold" style="color: #33b5ff;"><i class="fa-solid fa-cookie-bite me-2"></i> Cookies</h4>
+                    <p>Our website uses "cookies" (specifically session cookies) to remember the items in your cart. This is essential for the functionality of our shop.</p>
+                </div>
+
+                <div class="policy-section">
+                    <h4 class="fw-bold" style="color: #33b5ff;"><i class="fa-solid fa-envelope me-2"></i> Contact Us</h4>
+                    <p>If you have any questions about this Privacy Policy, please reach out to us through our social media channels or our contact page.</p>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="/" class="btn btn-outline-dark rounded-pill px-4">Return to Shopping</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .policy-section p, .policy-section li {
+        color: #555;
+        line-height: 1.7;
+    }
+    .policy-section h4 {
+        margin-top: 1.5rem;
+    }
+</style>
+{% endblock %}

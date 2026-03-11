@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            
+            <div class="text-center mb-5">
+                <h3 class="fw-bold" style="color: #0b2241;">My Order History</h3>
+                <p class="text-muted">Enter your 11-digit mobile number to see your orders.</p>
+                
+                <form action="/my-orders" method="POST" class="mt-4 shadow-sm p-2 bg-white rounded-pill d-flex border">
+                    <input type="tel" name="phone" class="form-control border-0 ps-4 shadow-none" 
+                           placeholder="01XXXXXXXXX" maxlength="11" value="{{ phone or '' }}" required>
+                    <button class="btn btn-primary px-4 rounded-pill fw-bold" type="submit">View Orders</button>
+                </form>
+            </div>
+
+            {% if orders %}
+                <h6 class="text-muted mb-4 small fw-bold text-uppercase">Showing {{ orders|length }} Orders</h6>
+                
+                {% for order in orders %}
+                <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden border-top border-4 border-primary">
+                    <div class="card-body p-4">
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">Order ID</small>
+                                <span class="fw-bold text-primary fs-5">
+                                    {{ order.order_id if order.order_id else order._id|string|last4 }}
+                                </span>
+                            </div>
+                            <span class="badge {% if order.status == 'Delivered' %}bg-success{% elif order.status == 'Cancelled' %}bg-danger{% else %}bg-info{% endif %} rounded-pill px-3 py-2">
+                                {{ order.status if order.status else 'Pending' }}
+                            </span>
+                        </div>
+
+                        <div class="py-3 border-top border-bottom bg-light bg-opacity-50 px-2 rounded">
+                            {% if order.items_details %}
+                                {% for item in order.items_details %}
+                                <div class="d-flex align-items-center mb-3">
+                                    <img src="{{ item.main_image if item.main_image else 'https://via.placeholder.com/100' }}" 
+                                         class="rounded border bg-white me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                    <div class="flex-grow-1">
+                                        <div class="small fw-bold text-navy">{{ item.title }}</div>
+                                        <div class="text-muted" style="font-size: 0.75rem;">
+                                            Qty: {{ item.quantity }} • ৳{{ item.price }}
+                                        </div>
+                                    </div>
+                                    <div class="fw-bold small">৳{{ item.subtotal }}</div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <p class="small text-muted italic">No items found.</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <div>
+                                <small class="text-muted d-block">Grand Total</small>
+                                <span class="h4 fw-bold text-dark">৳{{ order.total }}</span>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted d-block">Ordered On</small>
+                                <span class="small fw-bold">
+                                    {% if order.created_at and order.created_at.strftime %}
+                                        {{ order.created_at.strftime('%d %b, %Y') }}
+                                    {% else %}
+                                        Recently
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <div class="card-footer bg-white border-top-0 py-3 text-center">
+                        <form action="/track" method="POST" class="d-inline">
+                            <input type="hidden" name="order_id" value="{{ order.order_id }}">
+                            <button type="submit" class="btn btn-link btn-sm text-decoration-none fw-bold p-0">
+                                <i class="fa-solid fa-location-crosshairs me-1"></i> Track Order Live
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+
+            {% elif phone %}
+                <div class="text-center py-5 bg-white rounded-4 border shadow-sm mt-4">
+                    <div class="mb-3"><i class="fa-solid fa-ghost fa-3x text-light"></i></div>
+                    <h5 class="fw-bold">No Order Records Found</h5>
+                    <p class="text-muted small">We couldn't find any orders for <b>{{ phone }}</b>. Please check the number.</p>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .text-navy { color: #0b2241; }
+    body { background-color: #f8fafc; }
+</style>
+{% endblock %}

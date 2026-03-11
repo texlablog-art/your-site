@@ -1,0 +1,186 @@
+{% extends "admin_base.html" %} 
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-5 text-center">
+        <div class="col-12">
+            <h2 class="fw-bold display-6">
+                <i class="fa-solid fa-wand-magic-sparkles me-2 text-primary"></i> Store Appearance
+            </h2>
+            <p class="text-muted fs-5">Set the perfect vibe for your customers based on the season or festival.</p>
+            <hr class="w-25 mx-auto border-2 border-primary opacity-25">
+        </div>
+    </div>
+
+    <form action="{{ url_for('update_theme') }}" method="POST">
+        <div class="row g-4 justify-content-center">
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card theme-card h-100 border-0 shadow-sm {% if current_theme == 'default' %}active-theme{% endif %}">
+                    <div class="card-body p-4 text-center">
+                        <div class="theme-preview mb-3 bg-dark-navy">
+                            <span class="text-white fw-bold fs-5">Your site</span>
+                        </div>
+                        <h5 class="fw-bold">Default Classic</h5>
+                        <p class="small text-muted">Clean, professional navy & blue look.</p>
+                        <input class="form-check-input d-none" type="radio" name="theme" value="default" {% if current_theme == 'default' %}checked{% endif %}>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="card theme-card h-100 border-0 shadow-sm {% if current_theme == 'winter' %}active-theme{% endif %}">
+                    <div class="card-body p-4 text-center">
+                        <div class="theme-preview mb-3 bg-winter">
+                            <i class="fa-solid fa-snowflake text-info mb-2 fs-3"></i>
+                            <span class="text-primary fw-bold">Winter Blue ❄️</span>
+                        </div>
+                        <h5 class="fw-bold">Winter Frost</h5>
+                        <p class="small text-muted">Cool ice tones with snowfall effects.</p>
+                        <input class="form-check-input d-none" type="radio" name="theme" value="winter" {% if current_theme == 'winter' %}checked{% endif %}>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="card theme-card h-100 border-0 shadow-sm {% if current_theme == 'summer' %}active-theme{% endif %}">
+                    <div class="card-body p-4 text-center">
+                        <div class="theme-preview mb-3 bg-summer">
+                            <i class="fa-solid fa-sun text-danger mb-2 fs-3"></i>
+                            <span class="text-orange fw-bold">Summer Vibe ☀️</span>
+                        </div>
+                        <h5 class="fw-bold">Summer Orange</h5>
+                        <p class="small text-muted">Energetic warm colors & sun vibes.</p>
+                        <input class="form-check-input d-none" type="radio" name="theme" value="summer" {% if current_theme == 'summer' %}checked{% endif %}>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="card theme-card h-100 border-0 shadow-sm {% if current_theme == 'eid' %}active-theme{% endif %}">
+                    <div class="card-body p-4 text-center">
+                        <div class="theme-preview mb-3 bg-eid">
+                            <i class="fa-solid fa-star-and-crescent text-warning mb-2 fs-3"></i>
+                            <span class="text-gold fw-bold">Eid Mubarak ✨</span>
+                        </div>
+                        <h5 class="fw-bold">Eid Festive</h5>
+                        <p class="small text-muted">Royal celebration emerald green and gold.</p>
+                        <input class="form-check-input d-none" type="radio" name="theme" value="eid" {% if current_theme == 'eid' %}checked{% endif %}>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="card theme-card h-100 border-0 shadow-sm {% if current_theme == 'celebration' %}active-theme{% endif %}">
+                    <div class="card-body p-4 text-center">
+                        <div class="theme-preview mb-3 bg-victory">
+                            <div class="victory-sun"></div>
+                            <i class="fa-solid fa-flag text-white mb-2 fs-3 position-relative" style="z-index: 2;"></i>
+                            <span class="text-white fw-bold text-uppercase position-relative" style="z-index: 2; letter-spacing: 1px;">Victory Day 🇧🇩</span>
+                        </div>
+                        <h5 class="fw-bold">National Celebration</h5>
+                        <p class="small text-muted">Patriotic Green & Red for national days.</p>
+                        <input class="form-check-input d-none" type="radio" name="theme" value="celebration" {% if current_theme == 'celebration' %}checked{% endif %}>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-5 text-center">
+            <button type="submit" class="btn btn-primary btn-lg px-5 shadow-lg rounded-pill fw-bold">
+                <i class="fa-solid fa-check-circle me-2"></i> Save Appearance Changes
+            </button>
+        </div>
+    </form>
+</div>
+
+<style>
+    /* Card Styling */
+    .theme-card {
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        border: 2.5px solid transparent !important;
+        background: #fff;
+    }
+    .theme-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.12) !important;
+    }
+
+    /* Active State */
+    .active-theme {
+        border-color: #2563eb !important;
+        background-color: #f8faff;
+        position: relative;
+    }
+    .active-theme::after {
+        content: '✓ Active';
+        position: absolute;
+        top: -12px;
+        right: 20px;
+        background: #2563eb;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+    }
+
+    /* Preview Box Base */
+    .theme-preview {
+        height: 120px;
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        position: relative;
+    }
+    .theme-card:hover .theme-preview { transform: scale(0.98); }
+
+    /* Theme Specific Previews */
+    .bg-dark-navy { background: #0b0f19; }
+    .bg-winter { background: linear-gradient(135deg, #e0f2fe, #bae6fd); border: 1px solid #38bdf8; }
+    .bg-summer { background: linear-gradient(135deg, #fff7ed, #fdba74); border: 1px solid #f97316; }
+    .bg-eid    { background: linear-gradient(135deg, #064e3b, #065f46); border: 2px solid #fbbf24; }
+    .bg-victory { background: linear-gradient(135deg, #006a4e, #064e3b); border: 2px solid #f42a41; }
+
+    /* Victory Theme Sun Effect */
+    .victory-sun {
+        position: absolute;
+        width: 65px;
+        height: 65px;
+        background: rgba(244, 42, 65, 0.7);
+        border-radius: 50%;
+        z-index: 1;
+        box-shadow: 0 0 15px rgba(244, 42, 65, 0.3);
+    }
+
+    /* Helper Colors */
+    .text-orange { color: #ea580c; }
+    .text-gold   { color: #fbbf24; }
+</style>
+
+<script>
+    // Theme Card Selection Logic
+    document.querySelectorAll('.theme-card').forEach(card => {
+        card.addEventListener('click', () => {
+            // Remove active class from all cards
+            document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active-theme'));
+            
+            // Check the internal radio button
+            const radio = card.querySelector('input[type="radio"]');
+            radio.checked = true;
+            
+            // Add active class to clicked card
+            card.classList.add('active-theme');
+            
+            console.log("Selected Theme:", radio.value);
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,268 @@
+{% extends "admin_base.html" %}
+{% block content %}
+<div class="container-fluid py-4">
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show rounded-4 shadow-sm border-0 mb-4" role="alert">
+            <i class="fa-solid {% if category == 'success' %}fa-circle-check{% else %}fa-circle-exclamation{% endif %} me-2"></i>
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold text-navy mb-1">Admin Dashboard</h2>
+            <p class="text-muted small mb-0">Real-time order management and store statistics.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <div class="input-group shadow-sm rounded-pill overflow-hidden bg-white border">
+                <span class="input-group-text bg-white border-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                <input type="text" id="orderSearch" class="form-control border-0 shadow-none" placeholder="Search by name or phone..." onkeyup="filterTable()">
+            </div>
+            <button class="btn btn-white border shadow-sm rounded-pill px-3" onclick="location.reload()">
+                <i class="fa-solid fa-rotate"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-5">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-3 rounded-4 bg-primary text-white h-100">
+                <small class="opacity-75 fw-bold x-small text-uppercase">Total Revenue</small>
+                <h3 class="fw-bold mb-0">৳{{ "{:,}".format(stats.total_revenue) }}</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-3 rounded-4 bg-white border-start border-warning border-4 h-100">
+                <small class="text-muted fw-bold x-small text-uppercase">Pending Orders</small>
+                <h3 class="fw-bold mb-0 text-dark">{{ stats.pending_orders }}</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-3 rounded-4 bg-white h-100">
+                <small class="text-muted fw-bold x-small text-uppercase">Total Orders</small>
+                <h3 class="fw-bold mb-0 text-dark">{{ stats.order_count }}</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-3 rounded-4 bg-white h-100">
+                <small class="text-muted fw-bold x-small text-uppercase">Live Products</small>
+                <h3 class="fw-bold mb-0 text-dark">{{ stats.total_products }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-white py-3 border-bottom border-light">
+            <h5 class="fw-bold mb-0"><i class="fa-solid fa-list me-2 text-primary"></i>Recent Orders</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="ordersTable">
+                <thead class="bg-light">
+                    <tr class="text-muted small text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px;">
+                        <th class="ps-4">Order ID</th>
+                        <th>Customer</th>
+                        <th>Total</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td class="ps-4">
+                            <button onclick="openOrderModal('{{ order.safe_json }}')" 
+                                    class="btn btn-link p-0 fw-bold text-primary text-decoration-none shadow-none">
+                                #{{ order.order_id }}
+                            </button>
+                        </td>
+                        <td>
+                            <div class="fw-bold">{{ order.name }}</div>
+                            <div class="small text-muted">{{ order.phone }}</div>
+                        </td>
+                        <td class="fw-bold text-navy">৳{{ order.total }}</td>
+                        <td>
+                            <div class="small fw-bold text-uppercase">{{ order.payment_method }}</div>
+                            {% if order.transaction_id and order.transaction_id != 'N/A' %}
+                                <code class="text-danger small">{{ order.transaction_id }}</code>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if order.status == 'Pending' %}
+                                <span class="badge bg-warning text-dark px-3 rounded-pill">Pending</span>
+                            {% elif order.status == 'Confirmed' %}
+                                <span class="badge bg-success px-3 rounded-pill">Confirmed</span>
+                            {% elif order.status == 'Cancelled' %}
+                                <span class="badge bg-danger px-3 rounded-pill">Cancelled</span>
+                            {% else %}
+                                <span class="badge bg-secondary px-3 rounded-pill">{{ order.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-light border dropdown-toggle rounded-pill px-3" data-bs-toggle="dropdown">
+                                    Manage
+                                </button>
+                                <ul class="dropdown-menu shadow border-0 rounded-3">
+                                    <li>
+                                        <a class="dropdown-item" href="/admin/order_action/{{ order._id }}/Confirmed">
+                                            <i class="fa-solid fa-check me-2 text-success"></i>Confirm Order
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item text-danger" href="/admin/order_action/{{ order._id }}/Cancelled">
+                                            <i class="fa-solid fa-xmark me-2"></i>Cancel Order
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item small" target="_blank" href="https://wa.me/{{ order.phone }}">
+                                            <i class="fa-brands fa-whatsapp me-2 text-success"></i>WhatsApp Customer
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item small text-muted" href="/admin/delete_order/{{ order._id }}" 
+                                           onclick="return confirm('Permanently delete this order record?')">
+                                            <i class="fa-solid fa-trash-can me-2"></i>Delete Record
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 rounded-5 shadow-lg">
+            <div class="modal-header border-0 p-4 pb-0">
+                <h4 class="fw-bold mb-0">Order Summary <span id="modalOrderId" class="text-primary fs-5"></span></h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row g-4">
+                    <div class="col-md-5">
+                        <div class="p-4 rounded-4 bg-light h-100 border border-light">
+                            <label class="text-uppercase x-small fw-bold text-muted d-block mb-2">Customer Details</label>
+                            <h5 class="fw-bold mb-1" id="modalCustomerName"></h5>
+                            <p class="text-primary fw-bold small mb-3" id="modalCustomerPhone"></p>
+                            
+                            <label class="text-uppercase x-small fw-bold text-muted d-block mb-2">Delivery Address</label>
+                            <p class="small text-dark mb-4 lh-sm" id="modalCustomerAddress"></p>
+
+                            <label class="text-uppercase x-small fw-bold text-muted d-block mb-2">Payment</label>
+                            <div class="p-2 border rounded-3 bg-white">
+                                <p class="mb-0 small"><strong>Method:</strong> <span id="modalPayMethod"></span></p>
+                                <p class="mb-0 small"><strong>TrxID:</strong> <code class="text-danger fw-bold" id="modalTrxId"></code></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-7">
+                        <label class="text-uppercase x-small fw-bold text-muted d-block mb-3">Items Purchased</label>
+                        <div id="modalItemsContainer" class="pe-2" style="max-height: 280px; overflow-y: auto;">
+                            </div>
+
+                        <div class="mt-4 pt-3 border-top">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h5 fw-bold mb-0">Total Amount</span>
+                                <span class="h4 fw-bold text-primary mb-0" id="modalTotal"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 p-4 pt-0">
+                <button type="button" class="btn btn-light rounded-pill px-4 fw-bold" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary rounded-pill px-4 fw-bold" onclick="window.print()">
+                    <i class="fa-solid fa-print me-2"></i>Print Invoice
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Search filter logic
+function filterTable() {
+    let input = document.getElementById("orderSearch");
+    let filter = input.value.toUpperCase();
+    let tr = document.getElementById("ordersTable").getElementsByTagName("tr");
+    for (let i = 1; i < tr.length; i++) {
+        let text = tr[i].textContent.toUpperCase();
+        tr[i].style.display = text.indexOf(filter) > -1 ? "" : "none";
+    }
+}
+
+// Modal logic decoding the Base64 from app.py
+function openOrderModal(safeJson) {
+    try {
+        const decodedData = atob(safeJson);
+        const order = JSON.parse(decodedData);
+
+        document.getElementById('modalOrderId').innerText = "#" + order.order_id;
+        document.getElementById('modalCustomerName').innerText = order.name;
+        document.getElementById('modalCustomerPhone').innerText = order.phone;
+        document.getElementById('modalCustomerAddress').innerText = order.address;
+        document.getElementById('modalPayMethod').innerText = order.payment_method;
+        document.getElementById('modalTrxId').innerText = order.transaction_id || 'N/A';
+        document.getElementById('modalTotal').innerText = "৳" + order.total;
+
+        const container = document.getElementById('modalItemsContainer');
+        container.innerHTML = ''; 
+
+        order.items_details.forEach(item => {
+            container.innerHTML += `
+                <div class="d-flex align-items-center mb-3 p-2 rounded-3 bg-white border border-light">
+                    <img src="${item.main_image}" class="rounded shadow-sm" style="width: 50px; height: 50px; object-fit: cover;">
+                    <div class="ms-3 flex-grow-1">
+                        <p class="mb-0 fw-bold small text-truncate" style="max-width: 200px;">${item.title}</p>
+                        <small class="text-muted">৳${item.price} x ${item.quantity}</small>
+                    </div>
+                    <div class="text-end">
+                        <span class="fw-bold small text-navy">৳${item.subtotal}</span>
+                    </div>
+                </div>
+            `;
+        });
+
+        const myModal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
+        myModal.show();
+    } catch (e) {
+        console.error("Error decoding order data:", e);
+    }
+}
+</script>
+
+<style>
+    .text-navy { color: #0b2241; }
+    .x-small { font-size: 0.7rem; }
+    .rounded-4 { border-radius: 1rem !important; }
+    .rounded-5 { border-radius: 2rem !important; }
+    .btn-white { background-color: #fff; color: #333; }
+    
+    .table thead th { border: none; padding: 1.2rem 0.5rem; }
+    .table tbody td { padding: 1rem 0.5rem; border-color: #f8f9fa; }
+    
+    #modalItemsContainer::-webkit-scrollbar { width: 4px; }
+    #modalItemsContainer::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+
+    @media print {
+        body * { visibility: hidden; }
+        #orderDetailsModal, #orderDetailsModal * { visibility: visible; }
+        #orderDetailsModal { position: absolute; left: 0; top: 0; width: 100%; }
+        .btn-close, .modal-footer, .dropdown, .alert { display: none !important; }
+    }
+</style>
+{% endblock %}

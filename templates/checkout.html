@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4 py-lg-5">
+    <div class="row g-4 justify-content-center">
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white border-0 pt-4 px-4">
+                    <h5 class="fw-bold text-navy m-0">
+                        <span class="badge bg-primary me-2">1</span> Delivery Information
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form action="/checkout" method="POST" id="checkoutForm">
+                        <input type="hidden" name="applied_promo" id="hiddenPromoCode" value="{{ session.get('applied_promo', {}).get('code', '') }}">
+                        <input type="hidden" name="discount_amount" id="hiddenDiscountAmount" value="0">
+                        <input type="hidden" name="final_total" id="hiddenFinalTotal" value="{{ total }}">
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="small fw-bold text-muted mb-2 text-uppercase">Full Name</label>
+                                <input type="text" name="name" class="form-control border-light bg-light py-2" placeholder="Rahim Ahmed" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small fw-bold text-muted mb-2 text-uppercase">Phone Number</label>
+                                <input type="tel" name="phone" class="form-control border-light bg-light py-2" placeholder="01XXXXXXXXX" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="small fw-bold text-muted mb-2 text-uppercase">Full Shipping Address</label>
+                                <textarea name="address" class="form-control border-light bg-light" rows="3" placeholder="House, Road, Area, City..." required></textarea>
+                            </div>
+                        </div>
+
+                        <h5 class="fw-bold text-navy mt-5 mb-4">
+                            <span class="badge bg-primary me-2">2</span> Payment Method
+                        </h5>
+                        
+                        <div class="row g-3 mb-4">
+                            <div class="col-6">
+                                <input type="radio" class="btn-check" name="payment_method" id="pay_cod" value="cod" checked onclick="togglePaymentFields(false)">
+                                <label class="btn btn-outline-light text-dark border w-100 py-3 rounded-4 payment-card" for="pay_cod">
+                                    <i class="fa-solid fa-truck-fast d-block fs-3 mb-2 text-primary"></i>
+                                    <span class="fw-bold small">Cash on Delivery</span>
+                                </label>
+                            </div>
+                            <div class="col-6">
+                                <input type="radio" class="btn-check" name="payment_method" id="pay_now" value="digital" onclick="togglePaymentFields(true)">
+                                <label class="btn btn-outline-light text-dark border w-100 py-3 rounded-4 payment-card" for="pay_now" data-bs-toggle="modal" data-bs-target="#paymentInstructionModal">
+                                    <i class="fa-solid fa-mobile-screen d-block fs-3 mb-2 text-primary"></i>
+                                    <span class="fw-bold small">Online Payment</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="trx_section" class="mb-4 d-none">
+                            <div class="p-4 rounded-4 bg-white border shadow-sm border-primary border-opacity-25">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-primary bg-opacity-10 p-2 rounded-3 me-3">
+                                        <i class="fa-solid fa-receipt text-primary"></i>
+                                    </div>
+                                    <h6 class="fw-bold m-0 text-navy">Payment Verification</h6>
+                                </div>
+                                <label class="small fw-bold text-muted mb-2 text-uppercase">Transaction ID (TrxID)</label>
+                                <input type="text" name="transaction_id" id="trx_input" class="form-control border-light bg-light py-2 fw-bold" placeholder="Paste your TrxID here">
+                                <small class="text-muted mt-2 d-block" style="font-size: 11px;">
+                                    Example: 8N7A1X9PP (From bKash/Nagad SMS)
+                                </small>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold py-3 shadow d-lg-none mt-3">
+                            Confirm Order • ৳<span class="finalTotalDisplay">{{ total }}</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                <h6 class="fw-bold text-navy mb-3"><i class="fa-solid fa-tag me-2 text-primary"></i>Promo Code</h6>
+                <div class="input-group">
+                    <input type="text" id="promoInput" class="form-control bg-light border-0 py-2" placeholder="Ex: SAVE10" value="{{ session.get('applied_promo', {}).get('code', '') }}">
+                    <button class="btn btn-dark px-3 fw-bold" type="button" id="promoBtn" onclick="applyPromo()">Apply</button>
+                </div>
+                <div id="promoMessage" class="mt-2 small fw-bold"></div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 20px;">
+                <h5 class="fw-bold text-navy mb-4">Order Summary</h5>
+                
+                <div class="order-items-mini mb-4" style="max-height: 200px; overflow-y: auto;">
+                    {% for item in items %}
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="{{ item.main_image }}" class="rounded-3 border" style="width: 45px; height: 45px; object-fit: cover;">
+                        <div class="ms-2 flex-grow-1">
+                            <p class="mb-0 x-small fw-bold text-navy text-truncate" style="max-width: 120px;">{{ item.title }}</p>
+                            <small class="text-muted">Qty: {{ item.quantity }}</small>
+                        </div>
+                        <span class="fw-bold small">৳{{ item.subtotal }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="price-breakdown border-top pt-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Subtotal</span>
+                        <span class="fw-bold small">৳{{ total }}</span>
+                    </div>
+                    
+                    <div id="discountRow" class="d-flex justify-content-between mb-2 text-success d-none">
+                        <span class="small">Discount (<span id="discountPercentDisplay">0</span>%)</span>
+                        <span class="fw-bold small">-৳<span id="discountAmountDisplay">0</span></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted small">Delivery</span>
+                        <span class="text-success fw-bold small">FREE</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center border-top pt-3 mb-4">
+                        <span class="h5 fw-bold text-navy mb-0">Total</span>
+                        <span class="h4 fw-bold text-primary mb-0">৳<span class="finalTotalDisplay">{{ total }}</span></span>
+                    </div>
+                </div>
+
+                <button type="button" onclick="document.getElementById('checkoutForm').submit()" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold py-3 shadow-sm d-none d-lg-block">
+                    Place Order
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="paymentInstructionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 pb-0 px-4 pt-4">
+                <h5 class="fw-bold text-navy m-0">Send Money Instructions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="text-muted small mb-4">Please send <b>৳<span class="finalTotalDisplay">{{ total }}</span></b> to one of the numbers below:</p>
+                
+                <div class="d-flex align-items-center p-3 rounded-4 border mb-3 bg-light">
+                    <img src="https://download.logo.wine/logo/BKash/BKash-Icon-Logo.wine.png" width="40" class="me-3 rounded">
+                    <div>
+                        <div class="small fw-bold text-muted text-uppercase" style="font-size: 10px;">bKash (Personal)</div>
+                        <div class="h6 fw-bold text-navy m-0">017XXXXXXXX</div>
+                    </div>
+                    <button class="btn btn-sm btn-white ms-auto shadow-sm border rounded-pill px-3" onclick="copyNum('017XXXXXXXX')">Copy</button>
+                </div>
+
+                <div class="d-flex align-items-center p-3 rounded-4 border mb-4 bg-light">
+                    <img src="https://download.logo.wine/logo/Nagad/Nagad-Logo.wine.png" width="40" class="me-3">
+                    <div>
+                        <div class="small fw-bold text-muted text-uppercase" style="font-size: 10px;">Nagad (Personal)</div>
+                        <div class="h6 fw-bold text-navy m-0">018XXXXXXXX</div>
+                    </div>
+                    <button class="btn btn-sm btn-white ms-auto shadow-sm border rounded-pill px-3" onclick="copyNum('018XXXXXXXX')">Copy</button>
+                </div>
+
+                <div class="alert alert-primary border-0 rounded-4 small mb-0">
+                    <i class="fa-solid fa-circle-info me-2"></i> After payment, enter the <b>TrxID</b> in the verification box to confirm your order.
+                </div>
+            </div>
+            <div class="modal-footer border-0 p-4 pt-0">
+                <button type="button" class="btn btn-primary w-100 rounded-pill fw-bold py-2" data-bs-dismiss="modal">I've Sent Money</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const originalTotal = parseFloat("{{ total|default(0) }}");
+
+    // Copy Function
+    function copyNum(num) {
+        navigator.clipboard.writeText(num);
+        alert("Number Copied: " + num);
+    }
+
+    function applyPromo() {
+        const codeInput = document.getElementById('promoInput');
+        const code = codeInput.value.trim().toUpperCase();
+        const msg = document.getElementById('promoMessage');
+        const btn = document.getElementById('promoBtn');
+
+        if (!code) return;
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+        fetch('/apply_promo', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: `promo_code=${encodeURIComponent(code)}`
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.disabled = false;
+            btn.innerHTML = 'Apply';
+
+            if (data.success) {
+                const discPerc = parseFloat(data.discount);
+                const discAmt = (originalTotal * discPerc) / 100;
+                const finalTotal = originalTotal - discAmt;
+
+                document.getElementById('discountRow').classList.remove('d-none');
+                document.getElementById('discountPercentDisplay').innerText = discPerc;
+                document.getElementById('discountAmountDisplay').innerText = discAmt.toFixed(0);
+                document.querySelectorAll('.finalTotalDisplay').forEach(el => el.innerText = finalTotal.toLocaleString());
+
+                document.getElementById('hiddenPromoCode').value = code;
+                document.getElementById('hiddenDiscountAmount').value = discAmt;
+                document.getElementById('hiddenFinalTotal').value = finalTotal;
+
+                msg.className = "mt-2 small fw-bold text-success";
+                msg.innerText = "✓ " + data.message;
+            } else {
+                msg.className = "mt-2 small fw-bold text-danger";
+                msg.innerText = "✕ " + data.message;
+                resetPromoUI();
+            }
+        });
+    }
+
+    function resetPromoUI() {
+        document.getElementById('discountRow').classList.add('d-none');
+        document.querySelectorAll('.finalTotalDisplay').forEach(el => el.innerText = originalTotal.toLocaleString());
+        document.getElementById('hiddenPromoCode').value = "";
+        document.getElementById('hiddenDiscountAmount').value = "0";
+        document.getElementById('hiddenFinalTotal').value = originalTotal;
+    }
+
+    function togglePaymentFields(isOnline) {
+        const section = document.getElementById('trx_section');
+        const input = document.getElementById('trx_input');
+        if (isOnline) {
+            section.classList.remove('d-none');
+            input.required = true;
+        } else {
+            section.classList.add('d-none');
+            input.required = false;
+            input.value = "";
+        }
+    }
+</script>
+
+<style>
+    .text-navy { color: #0b2241; }
+    .x-small { font-size: 0.75rem; }
+    .payment-card { transition: all 0.2s; border: 2px solid #f0f0f0 !important; cursor: pointer; }
+    .btn-check:checked + .payment-card { border-color: #0d6efd !important; background-color: #f0f7ff !important; color: #0d6efd !important; }
+    .form-control:focus { box-shadow: none; border-color: #0d6efd; background: #fff !important; }
+    .btn-white { background: white; }
+</style>
+{% endblock %}

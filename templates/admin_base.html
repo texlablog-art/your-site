@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your site | Management Console</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --sidebar-bg: #0f172a; 
+            --accent-color: #33b5ff; 
+            --text-muted: #94a3b8;
+            --body-bg: #f1f5f9;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--body-bg);
+            color: #1e293b;
+            margin: 0;
+        }
+
+        /* --- Sidebar Design --- */
+        #sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: var(--sidebar-bg);
+            color: #fff;
+            z-index: 1050; /* Higher than navbar */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-section {
+            padding: 20px 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-section {
+            padding: 20px 15px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .nav-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin: 20px 0 10px 10px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: 0.2s;
+        }
+
+        .nav-link i { width: 25px; font-size: 1.1rem; }
+        .nav-link:hover { color: #fff; background: rgba(255,255,255,0.05); }
+        .nav-link.active {
+            color: #fff;
+            background: var(--accent-color);
+            box-shadow: 0 4px 12px rgba(51, 181, 255, 0.3);
+        }
+
+        /* --- Content Area --- */
+        #content-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-navbar {
+            height: 70px;
+            background: #fff;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .main-body { padding: 20px; flex-grow: 1; }
+
+        /* --- Backdrop Overlay for Mobile --- */
+        #sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.5);
+            z-index: 1040;
+            backdrop-filter: blur(2px);
+        }
+
+        /* --- Mobile Adjustments --- */
+        @media (max-width: 992px) {
+            #sidebar { left: calc(var(--sidebar-width) * -1); }
+            #sidebar.show { left: 0; }
+            #content-wrapper { margin-left: 0; }
+            #sidebar-overlay.active { display: block; }
+            
+            .main-body { padding: 15px; }
+            .top-navbar { padding: 0 15px; }
+        }
+
+        /* Utility */
+        .card-custom {
+            background: #fff;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <aside id="sidebar">
+        <div class="brand-section">
+            <h4 class="m-0 fw-bold"><i class="fa-solid fa-shield-halved me-2 text-info"></i>Your Site <span class="text-info">ADMIN</span></h4>
+            <button class="btn btn-link text-white d-lg-none p-0" onclick="toggleSidebar()">
+                <i class="fa-solid fa-xmark fs-4"></i>
+            </button>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-label">Core</div>
+            <a href="/admin/dashboard" class="nav-link {% if active_page == 'dashboard' %}active{% endif %}">
+                <i class="fa-solid fa-chart-line"></i> Dashboard
+            </a>
+
+            <div class="nav-label">Sales & Logistics</div>
+            <a href="/admin/track" class="nav-link {% if active_page == 'track' %}active{% endif %}">
+                <i class="fa-solid fa-truck-ramp-box"></i> Track Management
+            </a>
+
+            <div class="nav-label">Inventory</div>
+            <a href="/admin/add_product" class="nav-link {% if active_page == 'add_product' %}active{% endif %}">
+                <i class="fa-solid fa-square-plus"></i> Add Product
+            </a>
+            <a href="/admin/banners" class="nav-link {% if active_page == 'banners' %}active{% endif %}">
+                <i class="fa-solid fa-images"></i> Manage Banners
+            </a>
+            <a href="/admin/promo" class="nav-link {% if active_page == 'promo' %}active{% endif %}">
+                <i class="fa-solid fa-ticket"></i> Promo Codes
+            </a>
+            <a href="{{ url_for('admin_themes') }}" class="nav-link {% if active_page == 'themes' %}active{% endif %}">
+                <i class="fa-solid fa-palette"></i> Theme Management
+            </a>
+
+
+            <div class="nav-label">External</div>
+            <a href="/" target="_blank" class="nav-link">
+                <i class="fa-solid fa-eye"></i> View Store
+            </a>
+        </div>
+
+        <div class="p-3">
+            <a href="/admin/logout" class="nav-link text-danger border border-danger border-opacity-25 justify-content-center">
+                <i class="fa-solid fa-power-off me-2"></i> Logout
+            </a>
+        </div>
+    </aside>
+
+    <div id="content-wrapper">
+        <nav class="top-navbar justify-content-between">
+            <div class="d-flex align-items-center">
+                <button class="btn border-0 shadow-none ps-0 me-2" onclick="toggleSidebar()">
+                    <i class="fa-solid fa-bars-staggered fs-4"></i>
+                </button>
+                <h5 class="fw-semibold m-0 text-capitalize d-none d-sm-block">{{ active_page | replace('_', ' ') }}</h5>
+            </div>
+            
+            <div class="d-flex align-items-center">
+                <div class="text-end me-3 d-none d-md-block">
+                    <p class="mb-0 small fw-bold text-success">Online</p>
+                    <p class="mb-0 x-small text-muted">Server Status</p>
+                </div>
+                <div class="dropdown">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="rounded-circle border" width="38" style="cursor:pointer" data-bs-toggle="dropdown">
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                        <li><h6 class="dropdown-header">Administrator</h6></li>
+                        <li><a class="dropdown-item" href="#"><i class="fa-regular fa-user me-2"></i> Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="/admin/logout"><i class="fa-solid fa-power-off me-2"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="main-body">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show border-0 shadow-sm mb-4">
+                            <i class="fa-solid fa-circle-info me-2"></i> {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('active');
+            
+            // Prevent body scrolling when sidebar is open on mobile
+            if(sidebar.classList.contains('show') && window.innerWidth <= 992) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Close sidebar if window is resized above mobile breakpoint
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 992) {
+                document.getElementById('sidebar').classList.remove('show');
+                document.getElementById('sidebar-overlay').classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+    </script>
+</body>
+</html>

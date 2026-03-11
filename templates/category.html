@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="category-hero-section mb-3">
+    <div class="custom-radius shadow-sm bg-kayi-navy position-relative overflow-hidden text-center py-5">
+        <div class="hero-pattern"></div>
+        <div class="position-relative animate__animated animate__fadeInUp">
+            <h2 class="fw-bold text-white mb-1">{{ title }}</h2>
+            <p class="text-white-50 small mb-0">{{ products|length }} Items Available</p>
+            <div class="mx-auto mt-3" style="width: 40px; height: 3px; background: var(--kayi-blue); border-radius: 10px;"></div>
+        </div>
+    </div>
+</section>
+
+<div class="container mb-4">
+    <div class="category-scroll-wrapper text-center">
+        {% set categories = [
+            ('accessories', 'fa-boxes-stacked', 'Accessories'),
+            ('fashion', 'fa-shirt', 'Fashion'),
+        ] %}
+        {% for cat_id, icon, name in categories %}
+        <div class="category-item">
+            <a href="/category/{{ cat_id }}" class="text-decoration-none text-center d-block">
+                <div class="cat-icon-wrapper mx-auto mb-2 {% if title == name %}bg-kayi-blue text-white shadow-blue{% endif %}">
+                    <i class="fa-solid {{ icon }}"></i>
+                </div>
+                <p class="cat-text fw-bold mb-0 text-truncate {% if title == name %}text-primary{% endif %}">{{ name }}</p>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="container pb-5" id="products">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold m-0 border-start border-4 border-primary ps-2">{{ title }} Collection</h5>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb m-0 small">
+                <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">Home</a></li>
+                <li class="breadcrumb-item active text-primary fw-bold" aria-current="page">{{ title }}</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="row g-2 g-md-3 animate__animated animate__fadeIn">
+        {% for p in products %}
+        <div class="col-md-3 col-6">
+            <div class="card h-100 border-0 shadow-sm product-card">
+                <div class="position-relative overflow-hidden rounded-top-3">
+                    <a href="/product/{{ p._id }}">
+                        <img src="{{ p.main_image if p.main_image else 'https://via.placeholder.com/300' }}" 
+                             class="card-img-top product-img" alt="{{ p.title }}">
+                    </a>
+                    
+                    {% if p.del_price and p.del_price|int > p.price|int %}
+                        <span class="discount-tag">Save ৳{{ p.del_price|int - p.price|int }}</span>
+                    {% endif %}
+
+                    {% if not p.in_stock %}
+                    <div class="sold-out-overlay">
+                        <span class="badge bg-dark px-3 py-2">Sold Out</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="card-body p-2 d-flex flex-column">
+                    <a href="/product/{{ p._id }}" class="text-decoration-none text-dark">
+                        <p class="product-title mb-1">{{ p.title }}</p>
+                    </a>
+                    
+                    <div class="mt-auto mb-2">
+                        <span class="fw-bold text-primary fs-5">৳{{ p.price }}</span>
+                        {% if p.del_price %}<del class="text-muted x-small ms-1">৳{{ p.del_price }}</del>{% endif %}
+                    </div>
+
+                    <div class="row g-1">
+                        {% if p.in_stock %}
+                        <div class="col-3">
+                            <a href="/add_to_cart/{{ p._id }}" class="btn btn-outline-primary btn-sm w-100">
+                                <i class="fa-solid fa-cart-plus"></i>
+                            </a>
+                        </div>
+                        <div class="col-9">
+                            <a href="/add_to_cart/{{ p._id }}?next=checkout" class="btn btn-primary btn-sm w-100 text-white fw-bold">
+                                Buy Now
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="col-12">
+                            <button class="btn btn-secondary btn-sm w-100 disabled">Out of Stock</button>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12 text-center py-5">
+            <i class="fa-solid fa-boxes-packing fa-4x text-light mb-3"></i>
+            <h5 class="fw-bold text-muted">No products found in this category</h5>
+            <a href="/" class="btn btn-primary rounded-pill px-4 mt-2">Go Home</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    :root { --daraz-orange: #f85606; --kayi-blue: #33b5ff; --kayi-navy: #0b2241; }
+
+    /* Category Hero Style */
+    .category-hero-section .custom-radius { border-radius: 12px; }
+    .hero-pattern {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1.5px, transparent 1.5px);
+        background-size: 20px 20px;
+    }
+
+    /* SHARED STYLES FROM INDEX */
+    .category-scroll-wrapper {
+        display: flex; overflow-x: auto; gap: 20px; padding: 10px 0;
+        scrollbar-width: none; justify-content: center; flex-wrap: nowrap; 
+    }
+    .category-scroll-wrapper::-webkit-scrollbar { display: none; }
+    .category-item { min-width: 85px; flex-shrink: 0; }
+
+    .cat-icon-wrapper { 
+        width: 65px; height: 65px; background: #fff; border-radius: 50%; 
+        display: flex; align-items: center; justify-content: center; font-size: 1.5rem; 
+        color: var(--kayi-navy); box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transition: all 0.3s ease; margin: 0 auto;
+    }
+    .shadow-blue { box-shadow: 0 6px 15px rgba(51, 181, 255, 0.3) !important; }
+
+    .category-item:hover .cat-icon-wrapper { 
+        transform: translateY(-5px); background: var(--kayi-blue); color: white; 
+    }
+
+    .cat-text { font-size: 0.85rem; color: #444; margin-top: 8px; font-weight: 600; }
+
+    .product-img { aspect-ratio: 1/1; object-fit: cover; }
+    .product-title { 
+        font-size: 0.85rem; font-weight: 500; line-height: 1.2rem;
+        height: 2.4rem; overflow: hidden; display: -webkit-box;
+        -webkit-box-orient: vertical; 
+    }
+    .discount-tag {
+        position: absolute; top: 10px; left: 0;
+        background: var(--daraz-orange); color: white;
+        font-size: 0.65rem; padding: 3px 10px; font-weight: bold;
+        border-radius: 0 20px 20px 0; z-index: 2;
+    }
+
+    @media (max-width: 768px) {
+        .category-hero-section { margin-left: -12px; margin-right: -12px; }
+        .category-hero-section .custom-radius { border-radius: 0; }
+        .category-scroll-wrapper { justify-content: flex-start; padding-left: 15px; }
+        .cat-icon-wrapper { width: 50px; height: 50px; font-size: 1.1rem; }
+        .product-title { font-size: 0.8rem; height: 2.2rem; }
+    }
+</style>
+
+{% endblock %}

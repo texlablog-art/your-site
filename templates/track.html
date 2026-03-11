@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+    <div class="mx-auto" style="max-width: 950px;">
+        <div class="text-center mb-5 animate__animated animate__fadeInDown">
+            <h2 class="fw-bold" style="color: #0b2241;">Track Your Package</h2>
+            <p class="text-muted">Real-time updates for your Your Site order</p>
+            <div class="mx-auto" style="width: 60px; height: 4px; background: #33b5ff; border-radius: 10px;"></div>
+        </div>
+        
+        <form method="POST" class="mb-5 px-md-5">
+            <div class="input-group input-group-lg shadow-sm border rounded-pill overflow-hidden bg-white">
+                <input type="text" name="order_id" class="form-control border-0 px-4" 
+                       placeholder="Enter 10-digit Order ID (e.g. KM12345678)" required 
+                       value="{{ order.order_id if order else '' }}"
+                       style="box-shadow: none; font-size: 1rem;">
+                <button class="btn btn-primary px-4 fw-bold" type="submit" 
+                        style="background: #33b5ff; border:none; min-width: 140px;">
+                    <i class="fa-solid fa-magnifying-glass me-2"></i> Track Now
+                </button>
+            </div>
+        </form>
+
+        {% if order %}
+        <div class="row g-4 animate__animated animate__fadeInUp">
+            
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm p-4 rounded-4 mb-4" style="background: #fdfdfd; border-left: 5px solid #33b5ff !important;">
+                    <h6 class="text-uppercase fw-bold text-muted small mb-3" style="letter-spacing: 1px;">Shipping To:</h6>
+                    <div class="mb-2">
+                        <i class="fa-solid fa-circle-user text-primary me-2"></i>
+                        <span class="fw-bold" style="color: #0b2241;">{{ order.name }}</span>
+                    </div>
+                    <div class="mb-2">
+                        <i class="fa-solid fa-phone-volume text-primary me-2"></i>
+                        <span class="small">{{ order.phone }}</span>
+                    </div>
+                    <div class="mb-0">
+                        <i class="fa-solid fa-map-location-dot text-primary me-2"></i>
+                        <span class="small text-muted">{{ order.address }}, {{ order.city }}</span>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm p-4 rounded-4">
+                    <h6 class="text-uppercase fw-bold text-muted small mb-4" style="letter-spacing: 1px;">Order Summary</h6>
+                    <div class="order-items-list pe-2" style="max-height: 350px; overflow-y: auto;">
+                        {% for item in order.get('items_details', []) %}
+                        <div class="d-flex align-items-center mb-3 p-2 rounded-3 bg-light-subtle border border-light">
+                            <div class="bg-white shadow-sm rounded-3 p-2 me-3" style="width: 55px; height: 55px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-box-open text-primary opacity-75"></i>
+                            </div>
+                            <div class="flex-grow-1 overflow-hidden">
+                                <span class="d-block fw-bold small text-truncate" style="color: #0b2241;">{{ item.title }}</span>
+                                <small class="text-muted fw-bold">৳{{ item.price }}</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <hr class="my-4 opacity-10">
+                    <div class="d-flex justify-content-between align-items-center px-2">
+                        <span class="fw-600 text-muted">Grand Total</span>
+                        <h3 class="fw-bold m-0" style="color: #33b5ff;">৳{{ order.total }}</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm p-4 rounded-4 bg-white h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-5">
+                        <h5 class="fw-bold m-0" style="color: #0b2241;">Delivery Timeline</h5>
+                        <div class="text-end">
+                            <span class="d-block small text-muted">Status</span>
+                            <span class="badge rounded-pill px-3 py-2 {% if order.status|lower == 'delivered' %}bg-success{% else %}bg-primary{% endif %} shadow-sm">
+                                {{ order.status }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="timeline ps-3">
+                        {% set stages = [
+                            ('Pending', 'Order Placed & Confirmed'),
+                            ('Shipped', 'Handed to Courier'),
+                            ('In Region', 'Arrived in Your Region'),
+                            ('Delivered', 'Successfully Delivered')
+                        ] %}
+
+                        {% for key, label in stages %}
+                            {% set stage_info = namespace(active=false, time='Expected soon...') %}
+                            
+                            {% if key == 'Pending' %}
+                                {# The first step is always active if order exists #}
+                                {% set stage_info.active = true %}
+                                {% if order.created_at is string %}
+                                    {% set stage_info.time = order.created_at %}
+                                {% else %}
+                                    {% set stage_info.time = order.created_at.strftime('%I:%M %p, %d %b %Y') %}
+                                {% endif %}
+                            {% elif order.history %}
+                                {% for h in order.history %}
+                                    {% if h.status|lower|trim == key|lower|trim %}
+                                        {% set stage_info.active = true %}
+                                        {% set stage_info.time = h.time %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+
+                        <div class="timeline-item d-flex mb-5">
+                            <div class="timeline-marker-wrapper me-4">
+                                <div class="dot {% if stage_info.active %}active{% endif %}">
+                                    {% if stage_info.active %}
+                                        <i class="fa-solid fa-check" style="font-size: 10px; color: white !important;"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="line {% if stage_info.active %}active-line{% endif %}"></div>
+                            </div>
+                            <div class="timeline-content pb-2">
+                                <h6 class="m-0 fw-bold {% if stage_info.active %}text-dark{% else %}text-muted opacity-50{% endif %}">
+                                    {{ label }}
+                                </h6>
+                                <p class="small m-0 mt-1 {% if stage_info.active %}text-primary fw-600{% else %}text-muted{% endif %}">
+                                    {{ stage_info.time }}
+                                </p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        {% elif request.method == 'POST' %}
+        <div class="text-center py-5 animate__animated animate__headShake">
+            <div class="bg-light d-inline-block p-4 rounded-circle mb-4">
+                <i class="fa-solid fa-magnifying-glass-chart fa-3x text-secondary"></i>
+            </div>
+            <h4 class="fw-bold">No Order Found</h4>
+            <p class="text-muted">We couldn't find an order for ID: <span class="text-danger">{{ request.form.get('order_id') }}</span></p>
+            <a href="/track" class="btn btn-outline-primary rounded-pill px-4 mt-2">Try Again</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    :root { --kayi-blue: #33b5ff; --kayi-navy: #0b2241; }
+    
+    .order-items-list::-webkit-scrollbar { width: 4px; }
+    .order-items-list::-webkit-scrollbar-thumb { background: #eee; border-radius: 10px; }
+
+    .timeline-marker-wrapper {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 30px;
+    }
+
+    .dot {
+        width: 26px;
+        height: 26px;
+        background: #f0f2f5;
+        border-radius: 50%;
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 4px solid #fff;
+        box-shadow: 0 0 0 1px #eee;
+    }
+
+    .dot.active { 
+        background: var(--kayi-blue) !important; 
+        box-shadow: 0 0 0 1px var(--kayi-blue), 0 0 15px rgba(51, 181, 255, 0.4); 
+    }
+
+    .line {
+        width: 3px;
+        height: 120%;
+        background: #f0f2f5;
+        position: absolute;
+        top: 26px;
+        z-index: 1;
+    }
+
+    .line.active-line { background: var(--kayi-blue) !important; }
+    .timeline-item:last-child .line { display: none; }
+
+    .fw-600 { font-weight: 600; }
+
+    @media (max-width: 768px) {
+        .timeline-item { margin-bottom: 40px; }
+        .dot { width: 22px; height: 22px; }
+        .line { top: 22px; }
+    }
+</style>
+{% endblock %}

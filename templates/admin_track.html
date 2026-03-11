@@ -1,0 +1,119 @@
+{% extends "admin_base.html" %}
+{% block content %}
+<div class="container-fluid py-5 px-md-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold" style="color: #0b2241;">
+            <i class="fa-solid fa-truck-ramp-box me-2"></i> Logistics Management
+        </h2>
+        <a href="/admin/dashboard" class="btn btn-outline-dark rounded-pill px-4">
+            <i class="fa-solid fa-arrow-left me-2"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Order ID & Date</th>
+                        <th>Customer Details</th>
+                        <th>Current Status</th>
+                        <th class="text-center">Quick Update Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td class="ps-4">
+                            <span class="fw-bold d-block text-primary">#{{ order.order_id }}</span>
+                            <small class="text-muted">{{ order.created_at.strftime('%d %b, %I:%M %p') }}</small>
+                        </td>
+                        <td>
+                            <div class="fw-bold">{{ order.name }}</div>
+                            <div class="small text-muted"><i class="fa-solid fa-phone me-1"></i> {{ order.phone }}</div>
+                        </td>
+                        <td>
+                            <span class="badge rounded-pill px-3 py-2 
+                                {% if order.status == 'Pending' %}bg-warning text-dark
+                                {% elif order.status == 'Confirmed' %}bg-info
+                                {% elif order.status == 'Shipped' %}bg-primary
+                                {% elif order.status == 'Delivered' %}bg-success
+                                {% else %}bg-secondary{% endif %}">
+                                {{ order.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <form action="/admin/track_manage/{{ order._id }}" method="POST" class="d-flex justify-content-center gap-2">
+                                <button type="submit" name="status" value="Confirmed" 
+                                        class="btn btn-sm btn-action btn-outline-info" 
+                                        {% if order.status != 'Pending' %}disabled{% endif %} title="Confirm Order">
+                                    <i class="fa-solid fa-check"></i>
+                                </button>
+
+                                <button type="submit" name="status" value="Shipped" 
+                                        class="btn btn-sm btn-action btn-outline-primary" 
+                                        {% if order.status != 'Confirmed' %}disabled{% endif %} title="Hand to Courier">
+                                    <i class="fa-solid fa-truck-fast"></i>
+                                </button>
+
+                                <button type="submit" name="status" value="In Region" 
+                                        class="btn btn-sm btn-action btn-outline-warning" 
+                                        {% if order.status != 'Shipped' %}disabled{% endif %} title="Arrived in Region">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                </button>
+
+                                <button type="submit" name="status" value="Delivered" 
+                                        class="btn btn-sm btn-action btn-outline-success" 
+                                        {% if order.status != 'In Region' %}disabled{% endif %} title="Complete Delivery">
+                                    <i class="fa-solid fa-house-chimney-user"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .table thead th {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 1.2rem 1rem;
+        border: none;
+    }
+    .table tbody td {
+        padding: 1.2rem 1rem;
+        border-color: #f8f9fa;
+    }
+    .btn-action {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+    .btn-action:hover:not(:disabled) {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+    .btn-action:disabled {
+        opacity: 0.2;
+        cursor: not-allowed;
+    }
+    /* Status Badge Pulsing for Pending */
+    .bg-warning.text-dark {
+        animation: pulse-orange 2s infinite;
+    }
+    @keyframes pulse-orange {
+        0% { opacity: 1; }
+        50% { opacity: 0.6; }
+        100% { opacity: 1; }
+    }
+</style>
+{% endblock %}

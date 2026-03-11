@@ -1,0 +1,131 @@
+{% extends "admin_base.html" %}
+{% block content %}
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<div class="container-fluid py-4">
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm p-4 rounded-4 bg-white sticky-top" style="top: 20px;">
+                <h5 class="fw-bold text-navy mb-4"><i class="fa-solid fa-ticket me-2 text-primary"></i>New Coupon</h5>
+                
+                <form action="/admin/add_promo" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">PROMO CODE</label>
+                        <input type="text" name="code" class="form-control bg-light border-0 fw-bold text-uppercase" placeholder="e.g. SUMMER25" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">DISCOUNT PERCENTAGE (%)</label>
+                        <input type="number" name="discount" class="form-control bg-light border-0" placeholder="10" max="100" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted">APPLICABLE PRODUCTS</label>
+                        <select name="products" id="productSelect" class="form-control" multiple="multiple" required>
+                            <option value="all" selected>Select All Products</option>
+                            {% for p in products %}
+                            <option value="{{ p._id }}">{{ p.title }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text x-small mt-2">Search and select multiple products. Choose "Select All" to apply store-wide.</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold">Create Coupon</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm p-4 rounded-4 bg-white">
+                <h5 class="fw-bold text-navy mb-4">Active Promotions</h5>
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead class="text-muted x-small text-uppercase">
+                            <tr>
+                                <th>Code</th>
+                                <th>Discount</th>
+                                <th>Applicability</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in coupons %}
+                            <tr>
+                                <td><span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 fs-6">{{ c.code }}</span></td>
+                                <td class="fw-bold text-success">{{ c.discount_percent }}% OFF</td>
+                                <td>
+                                    {% if 'all' in c.applicable_products %}
+                                        <span class="badge rounded-pill bg-info bg-opacity-10 text-info">All Products</span>
+                                    {% else %}
+                                        <span class="badge rounded-pill bg-secondary bg-opacity-10 text-secondary">{{ c.applicable_products|length }} Items</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">
+                                    <form action="/admin/delete_promo/{{ c._id }}" method="POST" onsubmit="return confirm('Delete this code?')">
+                                        <button class="btn btn-sm btn-outline-danger border-0 rounded-circle"><i class="fa-solid fa-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('#productSelect').select2({
+        placeholder: "Search for products...",
+        allowClear: true,
+        closeOnSelect: false,
+        width: '100%'
+    });
+
+    // Professional Logic: If 'All' is selected, clear other specific products
+    $('#productSelect').on('select2:select', function (e) {
+        if(e.params.data.id === 'all') {
+            $(this).val(['all']).trigger('change');
+        } else {
+            let currentValues = $(this).val();
+            let index = currentValues.indexOf('all');
+            if (index > -1) {
+                currentValues.splice(index, 1);
+                $(this).val(currentValues).trigger('change');
+            }
+        }
+    });
+});
+</script>
+
+<style>
+    /* Styling Select2 to match your theme */
+    .select2-container--default .select2-selection--multiple {
+        background-color: #f8f9fa;
+        border: none;
+        border-radius: 10px;
+        padding: 5px;
+    }
+    .select2-container--default.select2-container--focus .select2-selection--multiple {
+        border: 1px solid #0d6efd;
+    }
+    .select2-selection__choice {
+        background-color: #0d6efd !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 5px !important;
+        padding: 2px 8px !important;
+    }
+    .select2-selection__choice__remove {
+        color: white !important;
+        margin-right: 5px !important;
+    }
+</style>
+
+{% endblock %}

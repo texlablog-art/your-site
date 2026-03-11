@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container py-4 mb-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-transparent p-0 small">
+            <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">Home</a></li>
+            <li class="breadcrumb-item"><a href="/category/{{ p.category|lower }}" class="text-decoration-none text-muted">{{ p.category }}</a></li>
+            <li class="breadcrumb-item active text-navy fw-bold" aria-current="page">{{ p.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4 g-lg-5">
+        <div class="col-md-6">
+            <div class="media-container mb-3 shadow-sm">
+                <div id="mainMediaWrapper" class="ratio ratio-1x1 bg-white rounded-4 overflow-hidden border">
+                    <img src="{{ p.main_image }}" id="mainView" class="img-fluid object-fit-contain p-3" alt="{{ p.title }}">
+                </div>
+            </div>
+            
+            <div class="d-flex gap-2 overflow-auto pb-2 custom-scrollbar">
+                <div class="thumb-wrapper active" onclick="swapToImage('{{ p.main_image }}', this)">
+                    <img src="{{ p.main_image }}" class="img-fluid">
+                </div>
+
+                {% if p.extra_images %}
+                    {% for img in p.extra_images %}
+                    <div class="thumb-wrapper" onclick="swapToImage('{{ img }}', this)">
+                        <img src="{{ img }}" class="img-fluid">
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                {% if p.video_url %}
+                <div class="thumb-wrapper video-thumb d-flex align-items-center justify-content-center bg-dark" 
+                     onclick="swapToVideo('{{ p.video_url }}', this)">
+                    <i class="fa-solid fa-play text-white fs-4"></i>
+                    <span class="video-label">Video</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="sticky-md-top" style="top: 100px;">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill small fw-bold">
+                        <i class="fa-solid fa-shield-check me-1"></i> Authentic Product
+                    </span>
+                    
+                    {% if p.in_stock %}
+                        <span class="text-success small fw-bold"><i class="fa-solid fa-circle-check"></i> In Stock</span>
+                    {% else %}
+                        <span class="text-danger small fw-bold"><i class="fa-solid fa-circle-xmark"></i> Out of Stock</span>
+                    {% endif %}
+                </div>
+
+                <h1 class="fw-bold text-navy mb-2 h2">{{ p.title }}</h1>
+                
+                <div class="d-flex align-items-center gap-2 mb-4">
+                    <div class="text-warning small">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <span class="text-muted small border-start ps-2">4.9 (120+ Sold)</span>
+                </div>
+
+                <div class="price-card p-3 rounded-4 bg-light mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="text-primary fw-bolder display-6">৳{{ p.price }}</span>
+                        {% if p.del_price and p.del_price|int > p.price|int %}
+                        <div class="d-flex flex-column">
+                            <del class="text-muted small">৳{{ p.del_price }}</del>
+                            <span class="badge bg-danger rounded-pill x-small">SAVE ৳{{ p.del_price|int - p.price|int }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h6 class="fw-bold text-uppercase small text-muted border-bottom pb-2 mb-3">Specifications</h6>
+                    <div class="product-description text-secondary lh-lg">
+                        {{ p.description | safe if p.description else "Premium quality product with sleek design and durable performance." }}
+                    </div>
+                </div>
+
+                <div class="d-none d-md-block">
+                    {% if p.in_stock %}
+                        <div class="row g-2 mb-3">
+                            <div class="col-8">
+                                <a href="/add_to_cart/{{ p._id }}?next=checkout" class="btn btn-navy btn-lg w-100 py-3 rounded-3 fw-bold shadow-sm">
+                                    <i class="fa-solid fa-bolt me-2"></i>Order Now
+                                </a>
+                            </div>
+                            <div class="col-4">
+                                <a href="/add_to_cart/{{ p._id }}" class="btn btn-outline-navy btn-lg w-100 py-3 rounded-3">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <a href="https://wa.me/8801XXXXXXXXX?text=Interested in {{ p.title }}" class="btn btn-whatsapp btn-lg w-100 py-3 rounded-3 shadow-sm">
+                            <i class="fa-brands fa-whatsapp me-2"></i>Order via WhatsApp
+                        </a>
+                    {% else %}
+                        <button class="btn btn-secondary btn-lg w-100 py-3 rounded-3 fw-bold mb-2" disabled>
+                            <i class="fa-solid fa-circle-exclamation me-2"></i>Currently Unavailable
+                        </button>
+                        <a href="https://wa.me/8801XXXXXXXXX?text=When will {{ p.title }} be back in stock?" class="btn btn-outline-success w-100 py-2 rounded-3 small">
+                            Request Restock via WhatsApp
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mobile-action-bar d-md-none border-top">
+    <div class="container d-flex gap-2 py-2">
+        {% if p.in_stock %}
+            <a href="https://wa.me/8801XXXXXXXXX" class="btn btn-success p-3 rounded-3">
+                <i class="fa-brands fa-whatsapp fs-5"></i>
+            </a>
+            <a href="/add_to_cart/{{ p._id }}" class="btn btn-outline-dark p-3 rounded-3">
+                <i class="fa-solid fa-cart-plus fs-5"></i>
+            </a>
+            <a href="/add_to_cart/{{ p._id }}?next=checkout" class="btn btn-navy flex-grow-1 py-3 fw-bold">
+                Buy Now
+            </a>
+        {% else %}
+            <button class="btn btn-secondary w-100 py-3 fw-bold" disabled>
+                OUT OF STOCK
+            </button>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    :root { --p-navy: #0b2241; --p-blue: #0d6efd; }
+    .text-navy { color: var(--p-navy); }
+    .btn-navy { background: var(--p-navy); color: white; border: none; transition: 0.3s; }
+    .btn-navy:hover { background: #000; color: white; }
+    .btn-outline-navy { border: 2px solid var(--p-navy); color: var(--p-navy); font-weight: bold; }
+    .btn-whatsapp { background: #25D366; color: white; font-weight: bold; }
+    .x-small { font-size: 11px; }
+
+    /* Gallery Styling */
+    .thumb-wrapper { 
+        min-width: 80px; height: 80px; 
+        border-radius: 12px; border: 2px solid #eee; 
+        cursor: pointer; overflow: hidden; transition: 0.2s;
+        flex-shrink: 0; background: white;
+    }
+    .thumb-wrapper img { width: 100%; height: 100%; object-fit: contain; padding: 5px; }
+    .thumb-wrapper.active { border-color: var(--p-blue); transform: scale(0.95); }
+    
+    .video-thumb { position: relative; }
+    .video-label { position: absolute; bottom: 2px; font-size: 9px; color: white; font-weight: bold; text-transform: uppercase; }
+
+    /* Floating Bar */
+    .mobile-action-bar {
+        position: fixed; bottom: 0; left: 0; right: 0;
+        background: white; z-index: 1050; box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar { height: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+
+    @media (max-width: 768px) {
+        body { padding-bottom: 70px; }
+        .display-6 { font-size: 1.8rem; }
+        #mainMediaWrapper iframe { width: 100%; height: 100%; }
+    }
+</style>
+
+<script>
+    const wrapper = document.getElementById('mainMediaWrapper');
+
+    function swapToImage(src, el) {
+        wrapper.innerHTML = `<img src="${src}" id="mainView" class="img-fluid object-fit-contain p-3 animate__animated animate__fadeIn">`;
+        updateActiveThumb(el);
+    }
+
+    function swapToVideo(url, el) {
+        let videoId = "";
+        if (url.includes('v=')) {
+            videoId = url.split('v=')[1].split('&')[0];
+        } else {
+            videoId = url.split('/').pop();
+        }
+        
+        wrapper.innerHTML = `
+            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/${videoId}?autoplay=1" 
+                    frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+        updateActiveThumb(el);
+    }
+
+    function updateActiveThumb(el) {
+        document.querySelectorAll('.thumb-wrapper').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="row g-5 align-items-center">
+                <div class="col-md-5">
+                    <h1 class="fw-bold mb-4">Let's <span class="text-primary">Talk</span></h1>
+                    <p class="text-muted mb-5">Have a question or feedback? We'd love to hear from you. Reach out via the form or our direct channels.</p>
+                    
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-dark text-white p-3 rounded-3 me-3">
+                                <i class="fa-solid fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-0">Email Support</h6>
+                                <p class="text-muted small mb-0">help@eshop.com</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-dark text-white p-3 rounded-3 me-3">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-0">Call Us</h6>
+                                <p class="text-muted small mb-0">+880 17XX XXXXXX</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-dark text-white p-3 rounded-3 me-3">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-0">Headquarters</h6>
+                                <p class="text-muted small mb-0">Dhaka, Bangladesh</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-7">
+                    <div class="card border-0 shadow-lg p-4 p-lg-5" style="border-radius: 30px; background: #ffffff;">
+                        <form action="/contact" method="POST">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="name" class="form-control border-0 bg-light rounded-4" id="c_name" placeholder="Full Name" required>
+                                <label for="c_name">Full Name</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="email" name="email" class="form-control border-0 bg-light rounded-4" id="c_email" placeholder="Email" required>
+                                <label for="c_email">Email Address</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="text" name="subject" class="form-control border-0 bg-light rounded-4" id="c_subj" placeholder="Subject" required>
+                                <label for="c_subj">Subject</label>
+                            </div>
+                            <div class="form-floating mb-4">
+                                <textarea name="message" class="form-control border-0 bg-light rounded-4" placeholder="Message" id="c_msg" style="height: 150px" required></textarea>
+                                <label for="c_msg">How can we help you?</label>
+                            </div>
+                            <button type="submit" class="btn btn-dark w-100 py-3 rounded-pill fw-bold shadow-sm transition-hover">
+                                SEND MESSAGE <i class="fa-solid fa-paper-plane ms-2"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control:focus {
+        background-color: #fff !important;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+        border: 1px solid var(--accent-blue) !important;
+    }
+    .transition-hover:hover {
+        transform: translateY(-3px);
+        background-color: var(--accent-blue) !important;
+    }
+</style>
+{% endblock %}

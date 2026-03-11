@@ -1,0 +1,77 @@
+{% extends "admin_base.html" %}
+{% set active_page = 'banners' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-4">
+        <div class="card card-custom p-4 shadow-sm border-0 mb-4 position-sticky" style="top: 100px;">
+            <div class="d-flex align-items-center mb-3">
+                <div class="bg-primary bg-opacity-10 p-2 rounded-3 me-3">
+                    <i class="fa-solid fa-cloud-arrow-up text-primary"></i>
+                </div>
+                <h6 class="fw-bold m-0">Upload New Banner</h6>
+            </div>
+            
+            <form action="/admin/banners" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-muted">Select Image</label>
+                    <input type="file" name="banner_image" class="form-control" required>
+                    <div class="form-text x-small mt-2 text-muted">
+                        <i class="fa-solid fa-circle-info me-1"></i> Use 1200x400px for best results.
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 fw-bold py-2">
+                    Add Banner
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card card-custom p-4 shadow-sm border-0">
+            <h6 class="fw-bold mb-4">Active Hero Banners ({{ banners|length }})</h6>
+            
+            <div class="row g-4">
+                {% for banner in banners %}
+                <div class="col-md-6">
+                    <div class="banner-card border rounded-3 overflow-hidden bg-white shadow-sm transition">
+                        <div class="position-relative" style="height: 140px; overflow: hidden;">
+                            <img src="{{ banner.image_url }}" class="w-100 h-100" style="object-fit: cover;" alt="Banner">
+                        </div>
+                        
+                        <div class="p-3 bg-light d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-muted d-block" style="font-size: 0.75rem;">Uploaded on</small>
+                                <span class="small fw-semibold">{{ banner.created_at.strftime('%d %b, %Y') }}</span>
+                            </div>
+                            
+                            <form action="/admin/delete_banner/{{ banner._id }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this banner?')">
+                                <button type="submit" class="btn btn-sm btn-danger px-3 rounded-pill border-0 shadow-sm">
+                                    <i class="fa-solid fa-trash-can me-1"></i> Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                {% if not banners %}
+                <div class="col-12 text-center py-5">
+                    <div class="bg-light d-inline-block p-4 rounded-circle mb-3">
+                        <i class="fa-regular fa-image fa-3x text-muted opacity-50"></i>
+                    </div>
+                    <h5 class="text-muted">No active banners</h5>
+                    <p class="small text-muted">Upload a banner to show it on your homepage.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .transition { transition: all 0.3s ease; }
+    .banner-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
+    .x-small { font-size: 0.7rem; }
+</style>
+{% endblock %}

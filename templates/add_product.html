@@ -1,0 +1,230 @@
+{% extends "admin_base.html" %}
+{% set active_page = 'add_product' %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row g-4">
+        <div class="col-lg-5 col-xl-4">
+            <div class="card border-0 shadow-sm p-4 rounded-4 bg-white sticky-top" style="top: 20px;">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="bg-primary bg-opacity-10 p-2 rounded-3 me-3">
+                        <i class="fa-solid fa-plus text-primary fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-navy m-0">Add New Product</h5>
+                </div>
+                
+                <form action="/admin/add_product" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted text-uppercase">Product Title</label>
+                        <input type="text" name="title" class="form-control bg-light border-0 py-2" placeholder="e.g. Wireless Earbuds" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted text-uppercase">Category</label>
+                        <select name="category" class="form-select bg-light border-0">
+                            <option value="Accessories">Accessories</option>
+                            <option value="Fashion">Fashion</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted text-uppercase">Product Description</label>
+                        <textarea name="description" class="form-control bg-light border-0" rows="3" placeholder="Describe your product..."></textarea>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-12 mb-2">
+                            <label class="form-label small fw-bold text-muted text-uppercase">Main Image (Thumbnail)</label>
+                            <input type="file" name="main_image" class="form-control bg-light border-0 small" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted text-uppercase">Gallery Images (Multiple)</label>
+                            <input type="file" name="extra_images" class="form-control bg-light border-0 small" multiple id="extraImgInput">
+                            <div id="imagePreviewContainer" class="d-flex flex-wrap gap-2 mt-2"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted text-uppercase">YouTube Video URL</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-0 text-danger"><i class="fa-brands fa-youtube"></i></span>
+                            <input type="url" name="video_url" class="form-control bg-light border-0" placeholder="https://youtube.com/watch?v=...">
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted text-uppercase">Sale Price</label>
+                            <input type="number" name="price" class="form-control bg-light border-0 fw-bold" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted text-uppercase">Old Price</label>
+                            <input type="number" name="del_price" class="form-control bg-light border-0 text-muted">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 fw-bold py-3 rounded-pill shadow-sm">
+                        <i class="fa-solid fa-cloud-arrow-up me-2"></i>Publish Product
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-7 col-xl-8">
+            <div class="card border-0 shadow-sm p-4 rounded-4 bg-white">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold text-navy m-0">Live Inventory</h5>
+                    <span class="badge bg-soft-primary text-primary px-3 py-2 rounded-pill">{{ products|length }} Items</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr class="text-muted x-small text-uppercase border-bottom">
+                                <th class="pb-3" style="width: 40%;">Product</th>
+                                <th class="pb-3 text-center">Stock Status</th>
+                                <th class="pb-3 text-end">Price</th>
+                                <th class="pb-3 text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in products %}
+                            <tr class="border-bottom border-light">
+                                <td class="py-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="position-relative">
+                                            <img src="{{ p.main_image }}" width="55" height="55" class="rounded-3 border shadow-sm me-3 object-fit-cover">
+                                            {% if p.video_url %}
+                                            <span class="position-absolute top-0 start-0 badge rounded-pill bg-danger" style="font-size: 8px; transform: translate(-30%, -30%);"><i class="fa-solid fa-play"></i></span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="text-truncate" style="max-width: 200px;">
+                                            <div class="fw-bold small text-navy mb-0 text-truncate">{{ p.title }}</div>
+                                            <span class="text-muted" style="font-size: 11px;">{{ p.category }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <form action="/admin/toggle_stock/{{ p._id }}" method="POST">
+                                        {% if p.in_stock %}
+                                        <button type="submit" class="btn btn-sm btn-success rounded-pill px-3 x-small shadow-sm">
+                                            <i class="fa-solid fa-check-circle me-1"></i> IN STOCK
+                                        </button>
+                                        {% else %}
+                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3 x-small shadow-sm">
+                                            <i class="fa-solid fa-circle-xmark me-1"></i> OUT OF STOCK
+                                        </button>
+                                        {% endif %}
+                                    </form>
+                                </td>
+                                <td class="text-end">
+                                    <div class="fw-bold small text-primary">৳{{ p.price }}</div>
+                                    {% if p.del_price and p.del_price|int > 0 %}
+                                        <del class="text-muted x-small">৳{{ p.del_price }}</del>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-light border-0 rounded-circle" data-bs-toggle="dropdown">
+                                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3">
+                                            <li><button class="dropdown-item small py-2" data-bs-toggle="modal" data-bs-target="#editModal{{ p._id }}"><i class="fa-solid fa-pen-to-square me-2 text-primary"></i>Edit</button></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <form action="/admin/delete_product/{{ p._id }}" method="POST" onsubmit="return confirm('Delete this product permanently?')">
+                                                    <button type="submit" class="dropdown-item small text-danger py-2"><i class="fa-solid fa-trash-can me-2"></i>Delete</button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <div class="modal fade" id="editModal{{ p._id }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content border-0 shadow-lg rounded-4">
+                                        <div class="modal-header border-0 pb-0 p-4">
+                                            <h5 class="fw-bold text-navy m-0">Edit Product Details</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form action="/admin/edit_product/{{ p._id }}" method="POST">
+                                            <div class="modal-body p-4">
+                                                <div class="mb-3">
+                                                    <label class="form-label small fw-bold text-muted text-uppercase">Title</label>
+                                                    <input type="text" name="title" class="form-control bg-light border-0" value="{{ p.title }}" required>
+                                                </div>
+                                                <div class="row g-2 mb-3">
+                                                    <div class="col-6">
+                                                        <label class="form-label small fw-bold text-muted text-uppercase">Sale Price (৳)</label>
+                                                        <input type="number" name="price" class="form-control bg-light border-0 fw-bold text-primary" value="{{ p.price }}" required>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <label class="form-label small fw-bold text-muted text-uppercase">Old Price</label>
+                                                        <input type="number" name="del_price" class="form-control bg-light border-0" value="{{ p.del_price }}">
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label small fw-bold text-muted text-uppercase">Category</label>
+                                                    <select name="category" class="form-select bg-light border-0">
+                                                        <option value="Accessories" {% if p.category == 'Accessories' %}selected{% endif %}>Accessories</option>
+                                                        <option value="Fashion" {% if p.category == 'Fashion' %}selected{% endif %}>Fashion</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-0">
+                                                    <label class="form-label small fw-bold text-muted text-uppercase">YouTube Video URL</label>
+                                                    <input type="url" name="video_url" class="form-control bg-light border-0" value="{{ p.video_url }}">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer border-0 pt-0 p-4">
+                                                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold">Save Changes</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Image Preview for multiple selection
+    document.getElementById('extraImgInput').addEventListener('change', function(e) {
+        const container = document.getElementById('imagePreviewContainer');
+        container.innerHTML = '';
+        [...e.target.files].forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = document.createElement('img');
+                img.src = event.target.result;
+                img.style.width = '50px';
+                img.style.height = '50px';
+                img.style.objectFit = 'cover';
+                img.className = 'rounded-2 border shadow-sm';
+                container.appendChild(img);
+            }
+            reader.readAsDataURL(file);
+        });
+    });
+</script>
+
+<style>
+    .bg-soft-primary { background-color: #e7f1ff; }
+    .text-navy { color: #0b2241; }
+    .x-small { font-size: 10px; font-weight: 700; }
+    .object-fit-cover { object-fit: cover; }
+    .form-control:focus, .form-select:focus { 
+        background-color: #fff !important; 
+        border: 1px solid #0d6efd !important; 
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1); 
+    }
+    .custom-scrollbar::-webkit-scrollbar { height: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
+</style>
+{% endblock %}
