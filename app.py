@@ -99,7 +99,7 @@ def my_orders():
                 
     return render_template('my_orders.html', orders=orders, phone=phone)
 
-@app.route('/admin/login', methods=['GET', 'POST'])
+@app.route('/admin', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
         if request.form.get('user') == '1' and request.form.get('pass') == '1':
@@ -676,4 +676,5 @@ def update_cart(id, action):
     return redirect(url_for('view_cart'))
 
 if __name__ == '__main__':
+
     app.run(debug=True)
