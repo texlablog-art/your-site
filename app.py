@@ -105,7 +105,7 @@ def admin_login():
         if request.form.get('user') == '1' and request.form.get('pass') == '1':
             session['admin_logged_in'] = True
             return redirect(url_for('admin_dashboard'))
-    return render_template('admin_login.html')
+    return render_template('admin_dashboard.html')
 
 @app.route('/about')
 def about():
@@ -678,3 +678,4 @@ def update_cart(id, action):
 if __name__ == '__main__':
 
     app.run(debug=True)
+
