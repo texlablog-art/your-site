@@ -1,0 +1,111 @@
+/* --- Royal Eid Theme: Emerald & Gold Glow --- */
+
+:root { 
+    --primary-navy: #064e3b;       /* Deep Islamic Emerald Green */
+    --accent-blue: #d4af37;        /* Metallic Royal Gold */
+    --light-bg: #f0fdf4;           /* Soft Mint Mist Background */
+    --white: #ffffff;
+    --text-muted: #4b5563;
+    --brand-blue: #fbbf24;         /* Bright Crescent Gold */
+    --brand-navy: #022c22;         /* Dark Forest Shadow */
+}
+
+/* --- 1. The Eid Backdrop --- */
+body { 
+    background-color: var(--light-bg);
+    background-image: 
+        /* Soft golden glow from the top like a hanging lantern */
+        radial-gradient(circle at 50% -10%, rgba(212, 175, 55, 0.2), transparent 70%),
+        /* Islamic Arabesque/Geometric subtle pattern */
+        url("https://www.transparenttextures.com/patterns/arabesque.png");
+    background-attachment: fixed;
+    color: var(--primary-navy);
+}
+
+/* --- 2. Brand & Navbar --- */
+.navbar { 
+    background: var(--primary-navy) !important; /* Deep Green Navbar */
+    border-bottom: 4px solid var(--accent-blue); /* Gold accent line */
+    box-shadow: 0 4px 25px rgba(2, 44, 34, 0.3);
+}
+
+.brand-text { font-style: italic; letter-spacing: 0.5px; }
+.accent-part { color: var(--accent-blue); text-shadow: 0 0 8px rgba(212, 175, 55, 0.4); }
+.navy-part { color: var(--white); }
+
+.nav-link { color: rgba(255, 255, 255, 0.9) !important; }
+.nav-link:hover, .nav-link.active { 
+    color: var(--accent-blue) !important; 
+    text-shadow: 0 0 10px var(--accent-blue);
+    transform: translateY(-1px);
+}
+
+/* --- 3. UI Components --- */
+.hamburger-icon span { background-color: var(--accent-blue); }
+
+.cart-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--accent-blue);
+    color: var(--accent-blue);
+}
+.cart-btn:hover { 
+    background: var(--accent-blue); 
+    color: var(--brand-navy); 
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+}
+.cart-badge { font-size: 0.65rem; background-color: var(--accent-blue) !important; color: var(--brand-navy) !important; }
+
+/* Floating WhatsApp - Royal Gold Edition */
+.whatsapp-float {
+    background: linear-gradient(135deg, #d4af37, #fbbf24); 
+    color: #064e3b;
+    box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);
+}
+.whatsapp-float:hover { transform: translateY(-5px) scale(1.1); color: #022c22; }
+
+/* --- 4. Sidebar & Footer --- */
+.offcanvas { background-color: var(--brand-navy) !important; width: 280px !important; }
+.offcanvas-header { border-bottom: 1px solid rgba(212, 175, 55, 0.2); }
+.mobile-nav .nav-link { 
+    color: #ecfdf5 !important; 
+    border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+}
+.mobile-nav .nav-link i { color: var(--accent-blue); }
+.mobile-nav .nav-link:hover { background: rgba(212, 175, 55, 0.05); color: white !important; }
+
+.footer-section { 
+    background: linear-gradient(180deg, #064e3b 0%, #022c22 100%); 
+    color: #a7f3d0; 
+    border-top: 6px solid var(--accent-blue);
+}
+.footer-title { color: var(--accent-blue); text-transform: uppercase; letter-spacing: 1px; }
+.footer-link { color: #cbd5e1; }
+.footer-link:hover { color: var(--accent-blue); padding-left: 8px; }
+
+.social-circle {
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid var(--accent-blue);
+    color: var(--accent-blue);
+}
+.social-circle:hover { 
+    background: var(--accent-blue); 
+    color: #000; 
+}
+
+.copyright-bar a { color: var(--accent-blue); text-decoration: none; font-weight: bold; }
+
+/* --- 5. Alerts & Cards --- */
+.alert-premium {
+    background: white;
+    border-left: 6px solid var(--primary-navy);
+    border-bottom: 1px solid var(--accent-blue);
+    box-shadow: 0 10px 30px rgba(6, 78, 59, 0.1);
+}
+.alert-icon { color: var(--accent-blue); }
+
+/* Custom: Royal Glass Cards */
+.card {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(212, 175, 55, 0.2) !important;
+    border-radius: 15px;
+}

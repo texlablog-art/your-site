@@ -1,0 +1,101 @@
+/* --- High-Vibe Summer Theme (Visuals & Colors) --- */
+
+:root { 
+    --primary-navy: #191c1f;       /* Very dark, nearly black (like the palm trees in image 0.png) */
+    --accent-blue: #f3a341;        /* Warm Sunset Orange/Gold (like the center of the sunset in image 0.png) */
+    --light-bg: #fffbf0;           /* Soft Sand-colored Background */
+    --white: #ffffff;
+    --text-muted: #6b7280;
+    --brand-blue: #2358bc;         /* Deep Sky Blue (like the top of the sky and the lower ocean in image 0.png) */
+    --brand-navy: #0e307c;         /* Dark Sea Blue */
+}
+
+/* --- 1. The Summer Vibe Background --- */
+body { 
+    background-color: var(--light-bg);
+    background-image: 
+        /* Top Sunlight Glow - Soft yellow to give a sun-kissed feel */
+        radial-gradient(circle at 50% -10%, #fff7d1, transparent 60%),
+        /* Sublte Sand/Beach Texture - sandpaper-like pattern for tactile feel */
+        url("https://www.transparenttextures.com/patterns/sandpaper.png");
+    background-attachment: fixed;
+    color: var(--primary-navy);
+}
+
+/* --- 2. Brand & Navbar --- */
+.navbar { 
+    background: var(--brand-blue) !important; /* Deep Blue Navbar like top of the sunset in image 0.png */
+    border-bottom: 4px solid var(--accent-blue); /* Gold Border beneath Navbar */
+    box-shadow: 0 4px 20px rgba(12, 74, 110, 0.2);
+}
+
+.brand-text { font-style: italic; }
+.accent-part { color: var(--accent-blue); text-shadow: 1px 1px 0px rgba(0,0,0,0.1); }
+.navy-part { color: var(--white); }
+
+.nav-link { color: rgba(255, 255, 255, 0.9) !important; }
+.nav-link:hover, .nav-link.active { 
+    color: var(--accent-blue) !important; 
+    transform: translateY(-1px);
+}
+
+/* --- 3. UI Components --- */
+.hamburger-icon span { background-color: var(--accent-blue); }
+
+.cart-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid var(--accent-blue);
+    color: var(--accent-blue);
+}
+.cart-btn:hover { 
+    background: var(--accent-blue); 
+    color: var(--brand-navy); 
+}
+.cart-badge { font-size: 0.65rem; }
+
+/* Floating WhatsApp - Tropical Vibe */
+.whatsapp-float {
+    background: linear-gradient(135deg, #22c55e, #15803d);
+    color: white;
+    box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
+}
+.whatsapp-float:hover { transform: translateY(-5px) scale(1.1); color: white; }
+
+/* --- 4. Sidebar & Footer --- */
+.offcanvas { background-color: var(--primary-navy) !important; width: 280px !important; }
+.offcanvas-header { border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+.mobile-nav .nav-link { 
+    color: #f1f5f9 !important; 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.mobile-nav .nav-link i { color: var(--accent-blue); }
+.mobile-nav .nav-link:hover { background: rgba(255, 255, 255, 0.05); color: white !important; }
+
+.footer-section { 
+    background: linear-gradient(180deg, var(--brand-blue) 0%, var(--brand-navy) 100%); 
+    color: #e2e8f0; 
+    border-top: 6px solid var(--accent-blue);
+}
+.footer-title { color: var(--accent-blue); text-transform: uppercase; letter-spacing: 1px; }
+.footer-link { color: #cbd5e1; }
+.footer-link:hover { color: var(--accent-blue); padding-left: 5px; }
+
+.social-circle {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--accent-blue);
+    color: var(--accent-blue);
+}
+.social-circle:hover { 
+    background: var(--accent-blue); 
+    color: var(--brand-navy); 
+}
+
+.copyright-bar a { color: var(--accent-blue); text-decoration: none; font-weight: bold; }
+
+/* --- 5. Alerts & Cards --- */
+.alert-premium {
+    background: white;
+    border-left: 6px solid var(--accent-blue);
+    border-bottom: 1px solid #fed7aa;
+}
+.alert-icon { color: var(--accent-blue); }

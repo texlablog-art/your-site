@@ -1,0 +1,119 @@
+/* --- Default Theme: Colors Only --- */
+
+:root { 
+    --primary-navy: #0b0f19;    /* Dark Blue/Black */
+    --accent-blue: #2563eb;     /* Vivid Blue */
+    --light-bg: #f8fafc;        /* Off White */
+    --white: #ffffff;
+    --text-muted: #64748b;
+    --brand-blue: #33b5ff;      /* Sky Blue */
+    --brand-navy: #0b2241;      /* Deep Navy */
+}
+
+/* Base Body Color */
+body { 
+    background-color: var(--light-bg);
+    color: var(--primary-navy);
+}
+
+/* Branding Colors */
+.accent-part { color: var(--brand-blue); }
+.navy-part { color: var(--brand-navy); }
+
+/* Navbar Colors */
+.navbar { 
+    background: rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+}
+
+.nav-link {
+    color: var(--primary-navy) !important;
+}
+
+.nav-link:hover, .nav-link.active { 
+    color: var(--accent-blue) !important; 
+}
+
+/* Mobile Icon Color */
+.hamburger-icon span {
+    background-color: var(--primary-navy);
+}
+
+/* Button & Component Colors */
+.cart-btn {
+    background: #f1f5f9;
+    color: var(--primary-navy);
+}
+
+.cart-btn:hover { 
+    background: var(--accent-blue); 
+    color: var(--white); 
+}
+
+.whatsapp-float {
+    background-color: #25d366; /* Standard WhatsApp Green */
+    color: var(--white);
+    box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3);
+}
+
+/* Sidebar (Offcanvas) Colors */
+.offcanvas { 
+    background-color: var(--primary-navy) !important; 
+}
+
+.offcanvas-header { 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
+}
+
+.mobile-nav .nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.mobile-nav .nav-link i { 
+    color: var(--accent-blue); 
+}
+
+.mobile-nav .nav-link:hover { 
+    background: rgba(255, 255, 255, 0.05); 
+    color: var(--white) !important; 
+}
+
+/* Footer Colors */
+.footer-section { 
+    background: var(--primary-navy); 
+    color: #94a3b8; 
+}
+
+.footer-title { 
+    color: var(--white); 
+}
+
+.footer-link { 
+    color: #94a3b8; 
+}
+
+.footer-link:hover { 
+    color: var(--white); 
+}
+
+.social-circle {
+    background: rgba(255,255,255,0.05);
+    color: var(--white);
+}
+
+.social-circle:hover { 
+    background: var(--accent-blue); 
+    color: var(--white); 
+}
+
+.copyright-bar a { 
+    color: var(--white); 
+}
+
+/* Alert Colors */
+.alert-premium {
+    background: var(--white);
+    border-left: 5px solid var(--accent-blue);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}

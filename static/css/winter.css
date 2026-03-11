@@ -1,0 +1,109 @@
+/* --- Ultra Winter Theme: Frost & Arctic Glow --- */
+
+:root { 
+    --primary-navy: #0f172a;       /* Deep Arctic Midnight */
+    --accent-blue: #7dd3fc;        /* Bright Glacial Ice Blue */
+    --light-bg: #f0f9ff;           /* Crisp Snow Background */
+    --white: #ffffff;
+    --text-muted: #64748b;
+    --brand-blue: #0ea5e9;         /* Vibrant Sky Blue (Daytime Ice) */
+    --brand-navy: #1e3a8a;         /* Deep Ocean Navy */
+}
+
+/* --- 1. The Winter Frost Background --- */
+body { 
+    background-color: var(--light-bg);
+    background-image: 
+        /* Top Borealis Glow - Soft blue/white light from the top */
+        radial-gradient(circle at 50% -10%, #e0f2fe, transparent 60%),
+        /* Frost Texture - Subtle icy crystals pattern */
+        url("https://www.transparenttextures.com/patterns/p4.png");
+    background-attachment: fixed;
+    color: var(--primary-navy);
+}
+
+/* --- 2. Brand & Navbar --- */
+.navbar { 
+    background: var(--brand-navy) !important; /* Deep Navy like a winter night */
+    border-bottom: 4px solid var(--accent-blue); /* Icy Blue Border */
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.2);
+}
+
+.brand-text { font-style: italic; }
+.accent-part { color: var(--accent-blue); text-shadow: 0px 0px 8px rgba(125, 211, 252, 0.4); }
+.navy-part { color: var(--white); }
+
+.nav-link { color: rgba(255, 255, 255, 0.9) !important; }
+.nav-link:hover, .nav-link.active { 
+    color: var(--accent-blue) !important; 
+    transform: translateY(-1px);
+    text-shadow: 0px 0px 5px rgba(125, 211, 252, 0.3);
+}
+
+/* --- 3. UI Components --- */
+.hamburger-icon span { background-color: var(--accent-blue); }
+
+.cart-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--accent-blue);
+    color: var(--accent-blue);
+}
+.cart-btn:hover { 
+    background: var(--accent-blue); 
+    color: var(--brand-navy); 
+}
+.cart-badge { font-size: 0.65rem; background-color: var(--accent-blue) !important; color: var(--brand-navy) !important; }
+
+/* Floating WhatsApp - Frozen Mint Vibe */
+.whatsapp-float {
+    background: linear-gradient(135deg, #0d9488, #2dd4bf); /* Teal to Mint (Icy Green) */
+    color: white;
+    box-shadow: 0 10px 25px rgba(13, 148, 136, 0.3);
+}
+.whatsapp-float:hover { transform: translateY(-5px) scale(1.1); color: white; }
+
+/* --- 4. Sidebar & Footer --- */
+.offcanvas { background-color: var(--primary-navy) !important; width: 280px !important; }
+.offcanvas-header { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+.mobile-nav .nav-link { 
+    color: #f1f5f9 !important; 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.mobile-nav .nav-link i { color: var(--accent-blue); }
+.mobile-nav .nav-link:hover { background: rgba(255, 255, 255, 0.1); color: white !important; }
+
+.footer-section { 
+    background: linear-gradient(180deg, var(--brand-navy) 0%, #020617 100%); 
+    color: #cbd5e1; 
+    border-top: 6px solid var(--accent-blue);
+}
+.footer-title { color: var(--accent-blue); text-transform: uppercase; letter-spacing: 1px; }
+.footer-link { color: #94a3b8; }
+.footer-link:hover { color: var(--white); padding-left: 5px; }
+
+.social-circle {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--accent-blue);
+    color: var(--accent-blue);
+}
+.social-circle:hover { 
+    background: var(--accent-blue); 
+    color: var(--brand-navy); 
+}
+
+.copyright-bar a { color: var(--accent-blue); text-decoration: none; font-weight: bold; }
+
+/* --- 5. Alerts & Cards --- */
+.alert-premium {
+    background: white;
+    border-left: 6px solid var(--accent-blue);
+    border-bottom: 1px solid #bae6fd; /* Light Blue frost border */
+}
+.alert-icon { color: var(--brand-blue); }
+
+/* Custom: Glass Cards for Winter */
+.card {
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}

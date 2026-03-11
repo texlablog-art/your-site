@@ -1,0 +1,110 @@
+/* --- National Celebration Theme: Patriotic Red & Green --- */
+
+:root { 
+    --primary-navy: #006a4e;       /* Deep Bangladesh Bottle Green */
+    --accent-blue: #f42a41;        /* Vibrant Victory Red */
+    --light-bg: #f0fdf4;           /* Soft Mint-White (Clear Sky) */
+    --white: #ffffff;
+    --text-muted: #4b5563;
+    --brand-blue: #006a4e;         /* Same as primary for consistency */
+    --brand-navy: #052e16;         /* Very Dark Forest Green */
+}
+
+/* --- 1. The Celebration Backdrop --- */
+body { 
+    background-color: var(--light-bg);
+    background-image: 
+        /* The "Red Sun" Glow - soft red radial at the center/top like the flag */
+        radial-gradient(circle at 50% 20%, rgba(244, 42, 65, 0.12), transparent 60%),
+        /* Subtle Paper/Confetti Texture for a parade/celebration feel */
+        url("https://www.transparenttextures.com/patterns/notebook.png");
+    background-attachment: fixed;
+    color: var(--primary-navy);
+}
+
+/* --- 2. Brand & Navbar --- */
+.navbar { 
+    background: var(--primary-navy) !important; /* National Green Navbar */
+    border-bottom: 5px solid var(--accent-blue); /* Bold Red Bottom Border */
+    box-shadow: 0 4px 20px rgba(0, 106, 78, 0.3);
+}
+
+.brand-text { font-style: normal; text-transform: uppercase; letter-spacing: 1px; }
+.accent-part { color: var(--accent-blue); text-shadow: 1px 1px 0px rgba(0,0,0,0.1); }
+.navy-part { color: var(--white); }
+
+.nav-link { color: rgba(255, 255, 255, 0.9) !important; }
+.nav-link:hover, .nav-link.active { 
+    color: var(--accent-blue) !important; 
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+/* --- 3. UI Components --- */
+.hamburger-icon span { background-color: var(--white); }
+
+.cart-btn {
+    background: var(--accent-blue);
+    border: 1px solid var(--accent-blue);
+    color: var(--white);
+}
+.cart-btn:hover { 
+    background: var(--white); 
+    color: var(--accent-blue); 
+    border-color: var(--white);
+}
+.cart-badge { font-size: 0.65rem; background-color: var(--white) !important; color: var(--accent-blue) !important; }
+
+/* Floating WhatsApp - Victory Edition */
+.whatsapp-float {
+    background: linear-gradient(135deg, #006a4e, #059669); 
+    color: white;
+    box-shadow: 0 10px 25px rgba(0, 106, 78, 0.4);
+}
+
+/* --- 4. Sidebar & Footer --- */
+.offcanvas { background-color: var(--brand-navy) !important; width: 280px !important; }
+.offcanvas-header { border-bottom: 1px solid var(--accent-blue); }
+.mobile-nav .nav-link { 
+    color: #ecfdf5 !important; 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.mobile-nav .nav-link i { color: var(--accent-blue); }
+
+.footer-section { 
+    background: linear-gradient(180deg, #006a4e 0%, #052e16 100%); 
+    color: #ecfdf5; 
+    border-top: 8px solid var(--accent-blue);
+}
+.footer-title { color: var(--white); border-bottom: 2px solid var(--accent-blue); display: inline-block; padding-bottom: 5px; }
+.footer-link { color: #a7f3d0; }
+.footer-link:hover { color: var(--accent-blue); padding-left: 10px; }
+
+.social-circle {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--white);
+    color: var(--white);
+}
+.social-circle:hover { 
+    background: var(--accent-blue); 
+    border-color: var(--accent-blue);
+}
+
+/* --- 5. Alerts & Cards --- */
+.alert-premium {
+    background: white;
+    border: 2px solid var(--primary-navy);
+    border-left: 10px solid var(--accent-blue);
+    color: var(--primary-navy);
+}
+.alert-icon { color: var(--accent-blue); }
+
+/* Custom Card Style for Celebration */
+.card {
+    border: 1px solid rgba(0, 106, 78, 0.1) !important;
+    transition: 0.3s;
+}
+.card:hover {
+    border-color: var(--accent-blue) !important;
+    transform: translateY(-5px);
+}
